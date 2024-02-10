@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "liquid"
+version = "0.1.0"
+description = "Functional state management framework for Python"
+authors = ["hacksparr0w <hacksparr0w@protonmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pydantic = "^2.6.1"
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^1.8.0"
+ruff = "^0.2.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

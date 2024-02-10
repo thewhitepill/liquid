@@ -8,8 +8,14 @@ from ._utility import identity
 
 
 __all__ = (
+    "DefaultStore",
     "GetState",
-    "Store"
+    "Store",
+    "StoreEnhancer",
+    "StoreFactory",
+
+    "create_store",
+    "default_store_factory"
 )
 
 
@@ -45,10 +51,17 @@ class DefaultStore(Store[S, A, S]):
         return self._state
 
 
+def default_store_factory(
+    reducer: Reducer[S, A],
+    initial_state: S
+) -> Store[S, A, S]:
+    return DefaultStore(reducer, initial_state)
+
+
 def create_store(
     reducer: Reducer[S, A],
     initial_state: S,
-    store_factory: StoreFactory[S, A, R1] = DefaultStore,
-    enchancer: StoreEnhancer[S, A, R1, R2] = identity
+    factory: StoreFactory[S, A, R1] = default_store_factory, # type: ignore[assignment]
+    enchancer: StoreEnhancer[S, A, R1, R2] = identity # type: ignore[assignment]
 ) -> Store[S, A, R2]:
-    return enchancer(store_factory(reducer, initial_state))
+    return enchancer(factory(reducer, initial_state))
