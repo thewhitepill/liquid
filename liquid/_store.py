@@ -62,6 +62,6 @@ def create_store(
     reducer: Reducer[S, A],
     initial_state: S,
     factory: StoreFactory[S, A, R1] = default_store_factory, # type: ignore[assignment]
-    enchancer: StoreEnhancer[S, A, R1, R2] = identity # type: ignore[assignment]
+    enhancer: StoreEnhancer[S, A, R1, R2] = identity # type: ignore[assignment]
 ) -> Store[S, A, R2]:
-    return enchancer(factory(reducer, initial_state))
+    return enhancer(factory(reducer, initial_state))
