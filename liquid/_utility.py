@@ -24,7 +24,9 @@ def compose(*functions: list[Callable]) -> Callable:
 
 
 def extend(source: Any, **kwargs: dict[str, Any]) -> Any:
-    props = {k: getattr(k) for k in source.__dir__() if not k.startswith("_")}
+    props = {k: getattr(source, k) for k in source.__dir__() \
+        if not k.startswith("_")}
+
     props = {**props, **kwargs}
 
     return SimpleNamespace(**props)
