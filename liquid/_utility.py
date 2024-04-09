@@ -13,7 +13,7 @@ __all__ = (
 T = TypeVar("T")
 
 
-def compose(*functions: list[Callable]) -> Callable:
+def compose(*functions: Callable) -> Callable:
     if len(functions) == 0:
         return identity
 

@@ -17,7 +17,7 @@ Next = Dispatch[Any, Any]
 Middleware = Callable[[Store[Any, Any, Any]], Callable[[Next], Callable[[Any], Any]]]
 
 
-def apply_middleware(*chain: list[Middleware]) -> StoreEnhancer[Any, Any, Any, Any]:
+def apply_middleware(*chain: Middleware) -> StoreEnhancer:
     def enhance(original_store: Store[Any, Any, Any]) -> Store[Any, Any, Any]:
         nonlocal chain
 

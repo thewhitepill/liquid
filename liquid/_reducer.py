@@ -1,4 +1,4 @@
-from typing import Callable, TypeVar
+from typing import Protocol, TypeVar
 
 from pydantic import BaseModel
 
@@ -9,6 +9,9 @@ __all__ = (
 
 
 S = TypeVar("S", bound=BaseModel)
-A = TypeVar("A", bound=BaseModel)
+A = TypeVar("A", contravariant=True, bound=BaseModel)
 
-Reducer = Callable[[S, A], S]
+
+class Reducer(Protocol[S, A]):
+    def __call__(self, state: S, action: A) -> S:
+        ...

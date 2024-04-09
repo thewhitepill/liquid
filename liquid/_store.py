@@ -1,4 +1,4 @@
-from typing import Callable, Generic, TypeVar
+from typing import Any, Callable, Protocol, TypeVar
 
 from pydantic import BaseModel
 
@@ -9,7 +9,6 @@ from ._utility import identity
 
 __all__ = (
     "DefaultStore",
-    "GetState",
     "Store",
     "StoreEnhancer",
     "StoreFactory",
@@ -19,22 +18,29 @@ __all__ = (
 )
 
 
-S = TypeVar("S", bound=BaseModel)
 A = TypeVar("A", bound=BaseModel)
-R1 = TypeVar("R1")
-R2 = TypeVar("R2")
+R = TypeVar("R")
+S = TypeVar("S", bound=BaseModel)
+S_co = TypeVar("S_co", covariant=True , bound=BaseModel)
 
 
-GetState = Callable[[], S]
+class Store(Protocol[S_co, A, R]):
+    dispatch: Dispatch[A, R]
+
+    async def get_state(self) -> S_co:
+        ...
 
 
-class Store(Generic[S, A, R1]):
-    dispatch: Dispatch[A, R1]
-    get_state: GetState[S]
+StoreEnhancer = Callable[[Store[Any, Any, Any]], Store[Any, Any, Any]]
 
 
-StoreEnhancer = Callable[[Store[S, A, R1]], Store[S, A, R2]]
-StoreFactory = Callable[[Reducer[S, A], S], Store[S, A, R1]]
+class StoreFactory(Protocol[S, A, R]):
+    def __call__(
+        self,
+        reducer: Reducer[S, A],
+        initial_state: S
+    ) -> Store[S, A, R]:
+        ...
 
 
 class DefaultStore(Store[S, A, S]):
@@ -42,12 +48,12 @@ class DefaultStore(Store[S, A, S]):
         self._reducer = reducer
         self._state = initial_state
 
-    async def dispatch(self, action: A) -> S:
+    async def dispatch(self, action: A) -> S: # type: ignore[override]
         self._state = self._reducer(self._state, action)
 
         return self._state
 
-    def get_state(self) -> S:
+    async def get_state(self) -> S:
         return self._state
 
 
@@ -61,7 +67,7 @@ def default_store_factory(
 def create_store(
     reducer: Reducer[S, A],
     initial_state: S,
-    factory: StoreFactory[S, A, R1] = default_store_factory, # type: ignore[assignment]
-    enhancer: StoreEnhancer[S, A, R1, R2] = identity # type: ignore[assignment]
-) -> Store[S, A, R2]:
+    factory: StoreFactory[S, A, R] = default_store_factory, # type: ignore[assignment]
+    enhancer: StoreEnhancer = identity # type: ignore[assignment]
+) -> Store[Any, Any, Any]:
     return enhancer(factory(reducer, initial_state))

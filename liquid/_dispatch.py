@@ -1,4 +1,4 @@
-from typing import Awaitable, Callable, TypeVar
+from typing import Protocol, TypeVar
 
 from pydantic import BaseModel
 
@@ -8,8 +8,10 @@ __all__ = (
 )
 
 
-A = TypeVar("A", bound=BaseModel)
-R = TypeVar("R")
+A = TypeVar("A", contravariant=True, bound=BaseModel)
+R = TypeVar("R", covariant=True)
 
 
-Dispatch = Callable[[A], Awaitable[R]]
+class Dispatch(Protocol[A, R]):
+    async def __call__(self, action: A) -> R:
+        ...
