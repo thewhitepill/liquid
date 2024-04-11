@@ -1,7 +1,5 @@
 from typing import Any, Callable, Protocol, TypeVar
 
-from pydantic import BaseModel
-
 from ._dispatch import Dispatch
 from ._reducer import Reducer
 from ._utility import identity
@@ -18,10 +16,10 @@ __all__ = (
 )
 
 
-A = TypeVar("A", bound=BaseModel)
+A = TypeVar("A")
 R = TypeVar("R")
-S = TypeVar("S", bound=BaseModel)
-S_co = TypeVar("S_co", covariant=True , bound=BaseModel)
+S = TypeVar("S")
+S_co = TypeVar("S_co", covariant=True)
 
 
 class Store(Protocol[S_co, A, R]):

@@ -1,14 +1,12 @@
 from typing import Protocol, TypeVar
 
-from pydantic import BaseModel
-
 
 __all__ = (
     "Dispatch",
 )
 
 
-A = TypeVar("A", contravariant=True, bound=BaseModel)
+A = TypeVar("A", contravariant=True)
 R = TypeVar("R", covariant=True)
 
 

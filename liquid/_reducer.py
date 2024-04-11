@@ -1,15 +1,13 @@
 from typing import Protocol, TypeVar
 
-from pydantic import BaseModel
-
 
 __all__ = (
     "Reducer",
 )
 
 
-S = TypeVar("S", bound=BaseModel)
-A = TypeVar("A", contravariant=True, bound=BaseModel)
+S = TypeVar("S")
+A = TypeVar("A", contravariant=True)
 
 
 class Reducer(Protocol[S, A]):
